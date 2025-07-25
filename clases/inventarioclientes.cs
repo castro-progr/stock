@@ -12,14 +12,33 @@ namespace stock.clases
         public static void RegistrarCliente(Cliente cliente)
         {
             if (!ListaClientes.Any(c => c.Cedula == cliente.Cedula))
+            {
                 ListaClientes.Add(cliente);
-            else
-                Console.WriteLine("⚠️ Cliente duplicado.");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Cliente registrado correctamente.");
+                Console.ResetColor();
+            }
+           
         }
+
+        
 
         public static Cliente BuscarPorCedula(string cedula)
         {
             return ListaClientes.FirstOrDefault(c => c.Cedula == cedula);
         }
+        public static void MostrarClientes()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("====== Lista de Clientes ======\n");
+            Console.ResetColor();
+            foreach (var cliente in ListaClientes)
+            {
+                cliente.MostrarResumen();
+                Console.WriteLine("-----------------------------");
+            }
+        }
     }
 }
+
+        

@@ -9,13 +9,23 @@ namespace stock.clases
     {
         public static List<Producto> ListaProductos = new List<Producto>();
 
-        public static void AgregarProductoDesdeConstructor(Producto producto)
+        public static bool AgregarProductoDesdeConstructor(Producto producto)
         {
-            if (!ListaProductos.Any(p => p.Codigo == producto.Codigo))
-                ListaProductos.Add(producto);
-            else
-                Console.WriteLine("⚠️ Producto duplicado, no se agregó.");
+            string nuevoCodigo = producto.Codigo.Trim().ToUpper();
+
+            bool esDuplicado = ListaProductos.Any(p => p.Codigo.Trim().ToUpper() == nuevoCodigo);
+
+            if (esDuplicado)
+            {
+                // Silenciar el mensaje, solo ignorar el guardado
+                return false;
+            }
+
+            ListaProductos.Add(producto);
+            return true;
         }
+
+        
 
         public static void AgregarProducto(Producto producto)
         {
@@ -29,8 +39,13 @@ namespace stock.clases
 
         public static void ImprimirProductos()
         {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("====== LISTA DE PRODUCTOS ======");
+            Console.ResetColor();
+
             foreach (var producto in ListaProductos)
                 producto.Imprimir();
         }
     }
 }
+        

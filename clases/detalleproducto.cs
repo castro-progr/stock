@@ -20,5 +20,7 @@ namespace stock.clases
             Cantidad = cantidad;
             Subtotal = cantidad * precio;
         }
+
+        public int precio { get; internal set; }
     }
 }

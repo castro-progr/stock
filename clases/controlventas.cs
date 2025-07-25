@@ -30,5 +30,32 @@ namespace stock.clases
                 v.Fecha.EndsWith($"/{año}")
             ).ToList();
         }
+
+        public static void ImprimirVentasConColor(List<MovimientoVenta> ventas)
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("===================================");
+            Console.WriteLine($" TOTAL DE VENTAS: {ventas.Count}");
+            Console.WriteLine("===================================");
+            Console.ResetColor();
+
+            foreach (var venta in ventas)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("-------- VENTA --------");
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Fecha: {venta.Fecha}");
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Cliente: {venta.Cliente.Nombres} {venta.Cliente.Apellidos}"); 
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Monto: ${venta.Monto:F2}");
+
+                Console.ResetColor();
+                Console.WriteLine();
+            }
+        }
     }
 }

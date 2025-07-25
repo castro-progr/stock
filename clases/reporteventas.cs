@@ -14,10 +14,10 @@ namespace stock.clases
             var ventas = ControlVentas.ObtenerVentasDelMes(mes, año);
             decimal total = 0;
 
-            Console.WriteLine($"📅 Reporte mensual {mes}/{año}");
+            Console.WriteLine($" Reporte mensual {mes}/{año}");
             foreach (var venta in ventas)
             {
-                Console.WriteLine($"{venta.Fecha} | {venta.Cliente.ObtenerNombreCompleto()} | Total: ${venta.TotalFactura}");
+                Console.WriteLine($"{venta.Fecha} | {venta.Cliente.NombreCompleto} | Total: ${venta.TotalFactura}");
                 total += venta.TotalFactura;
             }
             Console.WriteLine($"TOTAL DEL MES: ${total}\n");
@@ -31,7 +31,7 @@ namespace stock.clases
             foreach (var venta in ventas)
             {
                 Console.WriteLine($"Fecha: {venta.Fecha} | Total: ${venta.TotalFactura}");
-                foreach (var item in venta.DetalleProductos)
+                foreach (var item in venta.det)
                     Console.WriteLine($" - {item.NombreProducto} x{item.Cantidad} = ${item.Subtotal}");
                 total += venta.TotalFactura;
             }
@@ -46,13 +46,13 @@ namespace stock.clases
             string ruta = $"Reportes/reporte_mensual_{mes}_{año}.txt";
             using (StreamWriter writer = new StreamWriter(ruta))
             {
-                writer.WriteLine($"📅 Reporte general de ventas: {mes}/{año}");
+                writer.WriteLine($" Reporte general de ventas: {mes}/{año}");
                 writer.WriteLine("--------------------------------------------------");
 
                 foreach (var venta in ventasDelMes)
                 {
-                    writer.WriteLine($"Fecha: {venta.Fecha} | Cliente: {venta.Cliente.ObtenerNombreCompleto()} | Total: ${venta.TotalFactura}");
-                    foreach (var item in venta.DetalleProductos)
+                    writer.WriteLine($"Fecha: {venta.Fecha} | Cliente: {venta.Cliente.NombreCompleto} | Total: ${venta.TotalFactura}");
+                    foreach (var item in venta.det)
                     {
                         writer.WriteLine($" - {item.NombreProducto} x{item.Cantidad} = ${item.Subtotal}");
                     }
@@ -61,10 +61,10 @@ namespace stock.clases
                 }
 
                 writer.WriteLine("==================================================");
-                writer.WriteLine($"💰 TOTAL ACUMULADO DEL MES: ${total}");
+                writer.WriteLine($" TOTAL ACUMULADO DEL MES: ${total}");
             }
 
-            Console.WriteLine($"✅ Reporte mensual guardado en archivo: {ruta}");
+            Console.WriteLine($" Reporte mensual guardado en archivo: {ruta}");
         }
 
         public static void GuardarReportePorCliente(string cedula, string mes, string año)
@@ -75,13 +75,13 @@ namespace stock.clases
             string ruta = $"Reportes/reporte_cliente_{cedula}_{mes}_{año}.txt";
             using (StreamWriter writer = new StreamWriter(ruta))
             {
-                writer.WriteLine($"🧑 Reporte de compras del cliente {cedula} en {mes}/{año}");
+                writer.WriteLine($" Reporte de compras del cliente {cedula} en {mes}/{año}");
                 writer.WriteLine("--------------------------------------------------");
 
                 foreach (var venta in ventasCliente)
                 {
                     writer.WriteLine($"Fecha: {venta.Fecha} | Total: ${venta.TotalFactura}");
-                    foreach (var item in venta.DetalleProductos)
+                    foreach (var item in venta.det)
                     {
                         writer.WriteLine($" - {item.NombreProducto} x{item.Cantidad} = ${item.Subtotal}");
                     }
@@ -90,10 +90,10 @@ namespace stock.clases
                 }
 
                 writer.WriteLine("==================================================");
-                writer.WriteLine($"💰 TOTAL COMPRADO POR EL CLIENTE: ${total}");
+                writer.WriteLine($" TOTAL COMPRADO POR EL CLIENTE: ${total}");
             }
 
-            Console.WriteLine($"✅ Reporte del cliente guardado en archivo: {ruta}");
+            Console.WriteLine($" Reporte del cliente guardado en archivo: {ruta}");
         }
 
     }
