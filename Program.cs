@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Bibliography;
+
 
 
 namespace stock
@@ -16,6 +18,7 @@ namespace stock
     {
         static void Main(string[] args)
         {
+            
             using (SLDocument sL = new SLDocument())
             {
                 string pathfile = AppDomain.CurrentDomain.BaseDirectory + "clientes.xlsx";
@@ -33,7 +36,7 @@ namespace stock
                 tabla.Columns.Add("fecharegistro", typeof(string));
 
                 // Inserta los datos en el mismo orden
-                tabla.Rows.Add(1, "0986427536", "Camila", "Cortez", "Martha", "andreamg@gmail.com", "04/08/2025");
+                tabla.Rows.Add(1, "0986427536", "Camila", "Cortez", "Martha", "andreamg@gmail.com", "04/07/2025");
 
 
                 // Guardar el archivo Excel
@@ -41,18 +44,36 @@ namespace stock
                 sl.SaveAs(pathfile);
 
                 // LEER ARCHIVO DE CLIENTES
-                SLDocument clientes = new SLDocument(pathfile);
                 int indice = 1; // Comienza en fila 2 (fila 1 son los encabezados)
+                SLDocument clientes = new SLDocument(pathfile);
+                
 
 
                 while (!string.IsNullOrEmpty(clientes.GetCellValueAsString(indice, 1))) // Cedula en columna 2
                 {
-                    string cedula = clientes.GetCellValueAsString(indice, 2);
-                    string nombre = clientes.GetCellValueAsString(indice, 3);
-                    string apellido = clientes.GetCellValueAsString(indice, 4);
-                    string direccion = clientes.GetCellValueAsString(indice, 5);
-                    string correo = clientes.GetCellValueAsString(indice, 6);
-                    DateTime fechaRegistro = clientes.GetCellValueAsDateTime(indice, 7);
+                    if (indice == 1)
+                    {
+                        string enc1 = clientes.GetCellValueAsString(indice, 1);
+                        string enc2 = clientes.GetCellValueAsString(indice, 2);
+                        string enc3 = clientes.GetCellValueAsString(indice, 3);
+                        string enc4 = clientes.GetCellValueAsString(indice, 4);
+                        string enc5 = clientes.GetCellValueAsString(indice, 5);
+                        string enc6 = clientes.GetCellValueAsString(indice, 6);
+                        string enc7 = clientes.GetCellValueAsString(indice, 7);
+                    }
+                    else 
+                    {
+                        string cedula = clientes.GetCellValueAsString(indice, 2);
+                        string nombre = clientes.GetCellValueAsString(indice, 3);
+                        string apellido = clientes.GetCellValueAsString(indice, 4);
+                        string direccion = clientes.GetCellValueAsString(indice, 5);
+                        string correo = clientes.GetCellValueAsString(indice, 6);
+                        DateTime fechaRegistro = clientes.GetCellValueAsDateTime(indice, 7);
+                        Cliente nuevoCliente7 = new Cliente(cedula, nombre, apellido, direccion, correo, fechaRegistro);
+                    }
+                       
+                    
+                    
 
 
                    
@@ -74,7 +95,7 @@ namespace stock
                     Console.ResetColor();
 
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine("1. Registrar nuevo producto");
                     Console.WriteLine("2. Mostrar todos los productos");
                     Console.WriteLine("3. Buscar producto por código");
@@ -183,48 +204,76 @@ namespace stock
                             Console.ResetColor();
 
                             Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.WriteLine(" Registro de nuevo cliente:");
+                            Console.WriteLine(" Verificando cliente:");
                             Console.ResetColor();
 
                             Console.Write("Cedula: ");
                             string cedula = Console.ReadLine();
-                            Console.Write("Nombre: ");
-                            string nombres = Console.ReadLine();
-                            Console.Write("Apellido: ");
-                            string apellido = Console.ReadLine();
 
-                            Console.Write("Dirección: ");
-                            string direccioncliente = Console.ReadLine();
-                            Console.Write("Correo electrónico: ");
-                            string correocliente = Console.ReadLine();
-                            Console.Write("Fecha de registro (dd/MM/yyyy): ");
-                            DateTime fechaRegistro = DateTime.Parse(Console.ReadLine());
-
-                            Cliente nuevoCliente = new Cliente(cedula, nombres, apellido, direccioncliente, correocliente, fechaRegistro);
-
-                            // Guardar en Excel
                             string rutaArchivo = AppDomain.CurrentDomain.BaseDirectory + "clientes.xlsx";
-
                             SLDocument documento = new SLDocument(rutaArchivo);
-                            int fila = documento.GetWorksheetStatistics().NumberOfRows + 1;
+                            int totalFilas = documento.GetWorksheetStatistics().NumberOfRows;
+                            bool clienteExiste = false;
+                            int filaCliente = 0;
 
-                            documento.SetCellValue(fila, 1, fila);
-                            documento.SetCellValue(fila, 2, nuevoCliente.Cedula);
-                            documento.SetCellValue(fila, 3, nuevoCliente.Nombres);
-                            documento.SetCellValue(fila, 4, nuevoCliente.Apellidos);
-                            documento.SetCellValue(fila, 5, nuevoCliente.Direccion);
-                            documento.SetCellValue(fila, 6, nuevoCliente.Correo);
-                            documento.SetCellValue(fila, 7, nuevoCliente.FechaRegistro.ToString("dd/MM/yyyy"));
+                            for (int i = 2; i <= totalFilas; i++)  // Asumiendo fila 1 como encabezados
+                            {
+                                string cedulaEnArchivo = documento.GetCellValueAsString(i, 2); // Columna de cédula
+                                if (cedulaEnArchivo == cedula)
+                                {
+                                    clienteExiste = true;
+                                    filaCliente = i;
+                                    break;
+                                }
+                            }
 
-                            documento.SaveAs(rutaArchivo);
+                            if (clienteExiste)
+                            {
+                                string nombres = documento.GetCellValueAsString(filaCliente, 3);
+                                string apellido = documento.GetCellValueAsString(filaCliente, 4);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($" Bienvenido , {nombres} {apellido}");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine(" Registro de nuevo cliente:");
+                                Console.ResetColor();
 
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine(" Cliente guardado correctamente en el archivo Excel.");
-                            Console.ResetColor();
+                                Console.Write("Nombre: ");
+                                string nombres = Console.ReadLine();
+                                Console.Write("Apellido: ");
+                                string apellido = Console.ReadLine();
+                                Console.Write("Dirección: ");
+                                string direccioncliente = Console.ReadLine();
+                                Console.Write("Correo electrónico: ");
+                                string correocliente = Console.ReadLine();
+                                Console.Write("Fecha de registro (dd/MM/yyyy): ");
+                                DateTime fechaRegistro = DateTime.Parse(Console.ReadLine());
+
+                                Cliente nuevoCliente = new Cliente(cedula, nombres, apellido, direccioncliente, correocliente, fechaRegistro);
+
+                                int nuevaFila = totalFilas + 1;
+                                documento.SetCellValue(nuevaFila, 1, nuevaFila);
+                                documento.SetCellValue(nuevaFila, 2, nuevoCliente.Cedula);
+                                documento.SetCellValue(nuevaFila, 3, nuevoCliente.Nombres);
+                                documento.SetCellValue(nuevaFila, 4, nuevoCliente.Apellidos);
+                                documento.SetCellValue(nuevaFila, 5, nuevoCliente.Direccion);
+                                documento.SetCellValue(nuevaFila, 6, nuevoCliente.Correo);
+                                documento.SetCellValue(nuevaFila, 7, nuevoCliente.FechaRegistro.ToString("dd/MM/yyyy"));
+
+                                documento.SaveAs(rutaArchivo);
+
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(" Cliente guardado correctamente en el archivo Excel.");
+                                Console.ResetColor();
+                            }
 
                             // Inicia el proceso de venta
                             PuntoDeVenta.IniciarVenta();
                             break;
+
 
 
                         case "5":
@@ -299,7 +348,7 @@ namespace stock
 
                                 excel.SaveAs(pathFile);
 
-                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.ForegroundColor = ConsoleColor.Cyan;
                                 Console.WriteLine("Cliente guardado exitosamente.");
                                 Console.ResetColor();
                             }
@@ -322,6 +371,13 @@ namespace stock
                             Console.WriteLine(" Gracias por usar MiniStock. ¡Hasta pronto!");
                             Console.ResetColor();
                             break;
+                        case "10":
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine(" Gracias por usar MiniStock. ¡Hasta pronto!");
+                            Console.ResetColor();
+                            break;
+
+
 
                         default:
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -353,7 +409,7 @@ namespace stock
 
 
 
-
+            // Crear archivo Excel de inventario inicial
             string pathfile = AppDomain.CurrentDomain.BaseDirectory + "inventario.xlsx";
             SLDocument osldocument = new SLDocument();
             DataTable table = new DataTable("Productos");
@@ -380,7 +436,7 @@ namespace stock
             table.Rows.Add(10, "P010", "Set de Pulseras Personalizadas", "Accesorios", 11.25m, 12, 2);
 
 
-
+            // Importar DataTable al archivo Excel
             osldocument.ImportDataTable(1, 1, table, true);
             osldocument.SaveAs(pathfile);
 
@@ -392,8 +448,10 @@ namespace stock
             SLDocument inventario = new SLDocument(pathfile);
             while (!string.IsNullOrEmpty(inventario.GetCellValueAsString(indice, 1)))
             {
+                
                 if (indice == 1)
                 {
+                    
                     string enc1 = inventario.GetCellValueAsString(indice, 1);
                     string enc2 = inventario.GetCellValueAsString(indice, 2);
                     string enc3 = inventario.GetCellValueAsString(indice, 3);
@@ -455,6 +513,8 @@ namespace stock
 
             return false;
         }
+
+
 
 
 

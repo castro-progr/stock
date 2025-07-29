@@ -30,6 +30,7 @@ namespace stock.clases
             return total;
         }
 
+
         public void ImprimirFactura()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -52,5 +53,6 @@ namespace stock.clases
             Console.WriteLine("=============================\n");
             Console.ResetColor();
         }
+
     }
 }

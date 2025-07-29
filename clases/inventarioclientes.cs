@@ -38,6 +38,7 @@ namespace stock.clases
                 Console.WriteLine("-----------------------------");
             }
         }
+
     }
 }
 

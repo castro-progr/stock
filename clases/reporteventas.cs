@@ -11,6 +11,7 @@ namespace stock.clases
     {
         public static void MostrarReporteMensual(string mes, string año)
         {
+            // 🛠️ 1. Validar que el mes y año sean correctos
             var ventas = ControlVentas.ObtenerVentasDelMes(mes, año);
             decimal total = 0;
 
@@ -25,6 +26,7 @@ namespace stock.clases
 
         public static void MostrarReportePorCliente(string cedula, string mes, string año)
         {
+            // 🛠️ 1. Validar que el cliente exista
             var ventas = ControlVentas.ObtenerVentasPorCliente(cedula, mes, año);
             decimal total = 0;
 
@@ -40,10 +42,22 @@ namespace stock.clases
 
         public static void GuardarReporteMensual(string mes, string año)
         {
+            // 🛠️ 1. Validar que el mes y año sean correctos
             var ventasDelMes = ControlVentas.ObtenerVentasDelMes(mes, año);
             decimal total = 0;
 
-            string ruta = $"Reportes/reporte_mensual_{mes}_{año}.txt";
+            // 🛠️ 1. Ruta de carpeta y archivo
+            string carpeta = "Reportes";
+            string archivo = $"reporte_mensual_{mes}_{año}.txt";
+            string ruta = Path.Combine(carpeta, archivo);
+
+            // 🧱 2. Crear carpeta si no existe
+            if (!Directory.Exists(carpeta))
+            {
+                Directory.CreateDirectory(carpeta);
+            }
+
+            // 📄 3. Escribir contenido al archivo
             using (StreamWriter writer = new StreamWriter(ruta))
             {
                 writer.WriteLine($" Reporte general de ventas: {mes}/{año}");
@@ -64,14 +78,20 @@ namespace stock.clases
                 writer.WriteLine($" TOTAL ACUMULADO DEL MES: ${total}");
             }
 
-            Console.WriteLine($" Reporte mensual guardado en archivo: {ruta}");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"✅ Reporte mensual guardado en archivo: {ruta}");
+            Console.ResetColor();
         }
+
 
         public static void GuardarReportePorCliente(string cedula, string mes, string año)
         {
+            // 🛠️ 1. Validar que el cliente exista
             var ventasCliente = ControlVentas.ObtenerVentasPorCliente(cedula, mes, año);
             decimal total = 0;
 
+
+            // 🧱 2. Verificar si hay ventas del cliente
             string ruta = $"Reportes/reporte_cliente_{cedula}_{mes}_{año}.txt";
             using (StreamWriter writer = new StreamWriter(ruta))
             {
